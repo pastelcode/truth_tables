@@ -1,6 +1,9 @@
+use comfy_table::{
+    modifiers::{UTF8_ROUND_CORNERS, UTF8_SOLID_INNER_BORDERS},
+    presets::UTF8_FULL,
+    Cell, Color, Table,
+};
 use std::{collections::HashMap, env, fmt::Display};
-
-use comfy_table::Table;
 
 #[derive(Clone, Copy, Debug)]
 struct TruthValue(bool);
@@ -56,13 +59,28 @@ fn main() {
         });
 
     let mut table = Table::new();
-    table.set_header(&propositions);
+    table
+        .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_SOLID_INNER_BORDERS)
+        .apply_modifier(UTF8_ROUND_CORNERS);
+
+    table.set_header(
+        propositions
+            .clone()
+            .iter()
+            .map(|proposition| Cell::new(proposition))
+            .collect::<Vec<Cell>>(),
+    );
+
     (0..number_of_rows).for_each(|row| {
         table.add_row(
             propositions
                 .iter()
-                .map(|key| columns.get(key).unwrap()[row as usize])
-                .collect::<Vec<TruthValue>>(),
+                .map(|key| {
+                    let value = columns.get(key).unwrap()[row as usize];
+                    Cell::new(value).fg(if value.0 { Color::Green } else { Color::Red })
+                })
+                .collect::<Vec<Cell>>(),
         );
     });
 
