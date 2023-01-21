@@ -31,6 +31,7 @@ fn main() {
     let mut propositions = env::args().collect::<Vec<String>>();
     // Removes the first element of arguments, the path of this executable.
     propositions.remove(0);
+    propositions.dedup();
     // Get propositions -|
 
     let number_of_propositions: u32 = propositions.len().try_into().unwrap();
